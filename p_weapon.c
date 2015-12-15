@@ -101,8 +101,12 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	int			index;
 	gitem_t		*ammo;
 
-	if(ent->item->wpn_sabo)
+	if(ent->item->wpn_sabo){
 		other->flag_held=1;
+		other->health =999;
+		
+
+	}
 
 	index = ITEM_INDEX(ent->item);
 
@@ -701,8 +705,7 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	float	radius;
 
 	radius = damage+40;
-	if(ent->flag_held)
-		damage *= 4;
+	
 	if (is_quad)
 		damage *= 4;
 
@@ -718,7 +721,7 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	if(ent->flag_held)	
 	{					
 
-		T_Damage(ent, ent, ent->owner, ent->velocity, ent->s.origin, ent->s.origin, 25, 0, 0,0); // +
+		T_Damage(ent, ent, ent->owner, ent->velocity, ent->s.origin, ent->s.origin, damage, 0, 0,0); // +
 	}
 
 	gi.WriteByte (svc_muzzleflash);
@@ -776,6 +779,14 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
 
+	//DC adding check for weapon sabotage flag
+	if(ent->flag_held)	
+	{					
+
+		T_Damage(ent, ent, ent->owner, ent->velocity, ent->s.origin, ent->s.origin, damage, 0, 0,0); // +
+	}
+
+
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -824,6 +835,14 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	ent->client->kick_angles[0] = -1;
 
 	fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
+
+	//DC adding check for weapon sabotage flag
+	if(ent->flag_held)	
+	{					
+
+		T_Damage(ent, ent, ent->owner, ent->velocity, ent->s.origin, ent->s.origin, damage, 0, 0,0); // +
+	}
+
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -1006,6 +1025,13 @@ void Machinegun_Fire (edict_t *ent)
 	VectorSet(offset, 0, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+	//DC adding check for weapon sabotage flag
+	if(ent->flag_held)	
+	{					
+
+		T_Damage(ent, ent, ent->owner, ent->velocity, ent->s.origin, ent->s.origin, damage, 0, 0,0); // +
+	}
+
 
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -1143,6 +1169,13 @@ void Chaingun_Fire (edict_t *ent)
 		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 		fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_CHAINGUN);
+		//DC adding check for weapon sabotage flag
+	if(ent->flag_held)	
+	{					
+
+		T_Damage(ent, ent, ent->owner, ent->velocity, ent->s.origin, ent->s.origin, damage, 0, 0,0); // +
+	}
+
 	}
 
 	// send muzzle flash
@@ -1203,10 +1236,25 @@ void weapon_shotgun_fire (edict_t *ent)
 		kick *= 4;
 	}
 
-	if (deathmatch->value)
+	if (deathmatch->value){
 		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
-	else
+		//DC adding check for weapon sabotage flag
+	if(ent->flag_held)	
+	{					
+
+		T_Damage(ent, ent, ent->owner, ent->velocity, ent->s.origin, ent->s.origin, damage, 0, 0,0); // +
+	}
+
+	}
+	else{
 		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
+		//DC adding check for weapon sabotage flag
+	if(ent->flag_held)	
+	{					
+
+		T_Damage(ent, ent, ent->owner, ent->velocity, ent->s.origin, ent->s.origin, damage, 0, 0,0); // +
+	}
+	}
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -1261,6 +1309,13 @@ void weapon_supershotgun_fire (edict_t *ent)
 	v[YAW]   = ent->client->v_angle[YAW] + 5;
 	AngleVectors (v, forward, NULL, NULL);
 	fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
+	//DC adding check for weapon sabotage flag
+	if(ent->flag_held)	
+	{					
+
+		T_Damage(ent, ent, ent->owner, ent->velocity, ent->s.origin, ent->s.origin, damage, 0, 0,0); // +
+	}
+
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -1326,6 +1381,13 @@ void weapon_railgun_fire (edict_t *ent)
 	VectorSet(offset, 0, 7,  ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	fire_rail (ent, start, forward, damage, kick);
+	//DC adding check for weapon sabotage flag
+	if(ent->flag_held)	
+	{					
+
+		T_Damage(ent, ent, ent->owner, ent->velocity, ent->s.origin, ent->s.origin, damage, 0, 0,0); // +
+	}
+
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -1407,6 +1469,13 @@ void weapon_bfg_fire (edict_t *ent)
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	fire_bfg (ent, start, forward, damage, 400, damage_radius);
+	//DC adding check for weapon sabotage flag
+	if(ent->flag_held)	
+	{					
+
+		T_Damage(ent, ent, ent->owner, ent->velocity, ent->s.origin, ent->s.origin, damage, 0, 0,0); // +
+	}
+
 
 	ent->client->ps.gunframe++;
 
