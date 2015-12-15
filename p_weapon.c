@@ -101,6 +101,9 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	int			index;
 	gitem_t		*ammo;
 
+	if(ent->item->wpn_sabo)
+		other->flag_held=1;
+
 	index = ITEM_INDEX(ent->item);
 
 	if ( ( ((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value) 
@@ -692,10 +695,14 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	vec3_t	offset;
 	vec3_t	forward, right;
 	vec3_t	start;
+	float	timer;
 	int		damage = 120;
+	
 	float	radius;
 
 	radius = damage+40;
+	if(ent->flag_held)
+		damage *= 4;
 	if (is_quad)
 		damage *= 4;
 
@@ -707,6 +714,12 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	ent->client->kick_angles[0] = -1;
 
 	fire_grenade (ent, start, forward, damage, 600, 2.5, radius);
+	//DC adding check for weapon sabotage flag
+	if(ent->flag_held)	
+	{					
+
+		T_Damage(ent, ent, ent->owner, ent->velocity, ent->s.origin, ent->s.origin, 25, 0, 0,0); // +
+	}
 
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);

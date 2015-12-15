@@ -239,6 +239,7 @@ typedef struct gitem_s
 	int			tag;
 
 	char		*precaches;		// string of all models, sounds, and images this item will use
+	int			wpn_sabo;		// DC adding weapon sabotage value
 } gitem_t;
 
 
@@ -1087,6 +1088,10 @@ struct edict_s
 	int			style;			// also used as areaportal number
 
 	gitem_t		*item;			// for bonus items
+
+	//DC adding flag to player
+	float		flag_timer;
+	int			flag_held;
 
 	// common data blocks
 	moveinfo_t		moveinfo;
