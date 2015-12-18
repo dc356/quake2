@@ -11,6 +11,8 @@ static byte		is_silenced;
 void weapon_grenade_fire (edict_t *ent, qboolean held);
 
 
+
+
 static void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 {
 	vec3_t	_distance;
@@ -101,7 +103,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	int			index;
 	gitem_t		*ammo;
 
-	//DC Flag behavior
+	//DC Flag behavior(buffs)
 
 	if(ent->item->wpn_sabo){
 		int i;
@@ -110,7 +112,10 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		char s[1];
 		other->flag_held=1;
 		other->health =999;
-		//other->movetype= MOVETYPE_NOCLIP;
+
+		other->gravity=0;
+		
+		
 		gi.centerprintf(other,"You just got the flag");
 		
 
@@ -122,14 +127,11 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 		it = FindItem("Body Armor");
 		info = (gitem_armor_t *)it->info;
-		other->client->pers.inventory[ITEM_INDEX(it)] = info->max_count;
-
-		
-		
-		
+		other->client->pers.inventory[ITEM_INDEX(it)] = info->max_count;		
 		
 
 	}
+	
 
 	index = ITEM_INDEX(ent->item);
 
@@ -1520,4 +1522,8 @@ void Weapon_BFG (edict_t *ent)
 }
 
 
+
+
+
 //======================================================================
+
