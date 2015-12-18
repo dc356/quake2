@@ -617,6 +617,7 @@ qboolean Pickup_Armor (edict_t *ent, edict_t *other)
 	// use the better armor
 	else
 	{
+
 		// get info on old armor
 		if (old_armor_index == jacket_armor_index)
 			oldinfo = &jacketarmor_info;
@@ -1417,7 +1418,7 @@ always owned, never in the world
 		"models/weapons/g_launch/tris.md2", EF_ROTATE,
 		"models/weapons/v_launch/tris.md2",
 /* icon */		"w_glauncher",
-/* pickup */	"Grenade Launcher",
+/* pickup */	"FLAG",
 		0,
 		1,
 		"Grenades",

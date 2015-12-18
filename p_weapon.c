@@ -104,6 +104,11 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	if(ent->item->wpn_sabo){
 		other->flag_held=1;
 		other->health =999;
+		gi.centerprintf(other,"You just got the flag");
+
+
+		
+		
 		
 
 	}
