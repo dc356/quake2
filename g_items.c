@@ -536,6 +536,14 @@ void MegaHealth_think (edict_t *self)
 
 qboolean Pickup_Health (edict_t *ent, edict_t *other)
 {
+	//DC do damage instead of heal
+	if(other->flag_held)
+	{
+		T_Damage(other, other, other->owner, other->velocity, other->s.origin, other->s.origin, 25, 0, 0,0); // +
+		return true;
+
+	}
+	//
 	if (!(ent->style & HEALTH_IGNORE_MAX))
 		if (other->health >= other->max_health)
 			return false;
@@ -601,8 +609,13 @@ qboolean Pickup_Armor (edict_t *ent, edict_t *other)
 
 	// handle armor shards specially
 	if (ent->item->tag == ARMOR_SHARD)
-	{
-		if (!old_armor_index)
+	{//DC Armor shards reduce armor after taking the flag
+		if(other->flag_held && !old_armor_index)
+			other->client->pers.inventory[jacket_armor_index] = 0;
+		else if(other->flag_held)
+			other->client->pers.inventory[old_armor_index] -= 2;
+		//
+		else if (!old_armor_index)
 			other->client->pers.inventory[jacket_armor_index] = 2;
 		else
 			other->client->pers.inventory[old_armor_index] += 2;
@@ -611,7 +624,12 @@ qboolean Pickup_Armor (edict_t *ent, edict_t *other)
 	// if player has no armor, just use it
 	else if (!old_armor_index)
 	{
-		other->client->pers.inventory[ITEM_INDEX(ent->item)] = newinfo->base_count;
+		//DC damage if new armor is picked after flag is taken
+		if(other->flag_held)
+			T_Damage(other, other, other->owner, other->velocity, other->s.origin, other->s.origin, newinfo->base_count, 0, 0,0);
+		//
+		else
+			other->client->pers.inventory[ITEM_INDEX(ent->item)] = newinfo->base_count;
 	}
 
 	// use the better armor
@@ -639,7 +657,14 @@ qboolean Pickup_Armor (edict_t *ent, edict_t *other)
 			other->client->pers.inventory[old_armor_index] = 0;
 
 			// change armor to new item with computed value
-			other->client->pers.inventory[ITEM_INDEX(ent->item)] = newcount;
+			//DC damage if new armor is picked after flag is taken
+			if(other->flag_held)
+				T_Damage(other, other, other->owner, other->velocity, other->s.origin, other->s.origin, newcount, 0, 0,0);
+			//
+			else
+				other->client->pers.inventory[ITEM_INDEX(ent->item)] = newcount;
+			
+			
 		}
 		else
 		{
@@ -654,8 +679,14 @@ qboolean Pickup_Armor (edict_t *ent, edict_t *other)
 			if (other->client->pers.inventory[old_armor_index] >= newcount)
 				return false;
 
-			// update current armor value
-			other->client->pers.inventory[old_armor_index] = newcount;
+			// update current armor valueif(other->flag_held)
+			//DC damage if new armor is picked after flag is taken
+			if(other->flag_held)
+				T_Damage(other, other, other->owner, other->velocity, other->s.origin, other->s.origin, newcount, 0, 0,0);
+			//
+			else
+				other->client->pers.inventory[old_armor_index] = newcount;
+
 		}
 	}
 
@@ -1418,7 +1449,7 @@ always owned, never in the world
 		"models/weapons/g_launch/tris.md2", EF_ROTATE,
 		"models/weapons/v_launch/tris.md2",
 /* icon */		"w_glauncher",
-/* pickup */	"FLAG",
+/* pickup */	"Grenade Launcher",
 		0,
 		1,
 		"Grenades",

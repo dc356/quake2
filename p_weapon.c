@@ -101,12 +101,30 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	int			index;
 	gitem_t		*ammo;
 
+	//DC Flag behavior
+
 	if(ent->item->wpn_sabo){
+		int i;
+		gitem_t		*it;
+		gitem_armor_t	*info;
+		char s[1];
 		other->flag_held=1;
 		other->health =999;
+		//other->movetype= MOVETYPE_NOCLIP;
 		gi.centerprintf(other,"You just got the flag");
+		
 
+		it = FindItem("Jacket Armor");
+		other->client->pers.inventory[ITEM_INDEX(it)] = 0;
 
+		it = FindItem("Combat Armor");
+		other->client->pers.inventory[ITEM_INDEX(it)] = 0;
+
+		it = FindItem("Body Armor");
+		info = (gitem_armor_t *)it->info;
+		other->client->pers.inventory[ITEM_INDEX(it)] = info->max_count;
+
+		
 		
 		
 		
@@ -139,8 +157,11 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 			{
 				if ((int)(dmflags->value) & DF_WEAPONS_STAY)
 					ent->flags |= FL_RESPAWN;
+				else if(ent->item->wpn_sabo)//DC remove respawn for flag
+				{
+				}
 				else
-					SetRespawn (ent, 30);
+					SetRespawn(ent, 10);
 			}
 			if (coop->value)
 				ent->flags |= FL_RESPAWN;
